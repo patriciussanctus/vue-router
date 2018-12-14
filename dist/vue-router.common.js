@@ -269,6 +269,9 @@ function createRoute (
   if (redirectedFrom) {
     route.redirectedFrom = getFullPath(redirectedFrom, stringifyQuery$$1);
   }
+  if (location._force) {
+    route._force = true;
+  }
   return Object.freeze(route)
 }
 
@@ -1310,12 +1313,18 @@ function normalizeLocation (
     hash = "#" + hash;
   }
 
-  return {
+  var result = {
     _normalized: true,
     path: path,
     query: query,
     hash: hash
+  };
+  // check force
+  if (next._force) {
+    result._force = true;
   }
+
+  return result
 }
 
 /*  */
@@ -1901,8 +1910,9 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
     }
     onAbort && onAbort(err);
   };
-  if (
-    isSameRoute(route, current) &&
+  if (isSameRoute(route, current) &&
+    // case for public function "reload"
+    !route._force &&
     // in the case the route map has been dynamically appended to
     route.matched.length === current.matched.length
   ) {
@@ -2529,6 +2539,18 @@ VueRouter.prototype.onError = function onError (errorCb) {
 
 VueRouter.prototype.push = function push (location, onComplete, onAbort) {
   this.history.push(location, onComplete, onAbort);
+};
+
+VueRouter.prototype.reload = function reload () {
+  var ref = this.history;
+    var current = ref.current;
+  var result = { _force: true };
+  if (current.hash) { result.hash = current.hash; }
+  if (current.path) { result.path = current.path; }
+  if (current.params) { result.params = current.params; }
+  if (current.query) { result.query = current.query; }
+
+  this.history.push(result);
 };
 
 VueRouter.prototype.replace = function replace (location, onComplete, onAbort) {
