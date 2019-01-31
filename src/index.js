@@ -150,7 +150,7 @@ export default class VueRouter {
     if (current.params) result.params = current.params
     if (current.query) result.query = current.query
 
-    this.history.push(result)
+    this.history.replace(result)
   }
 
   replace (location: RawLocation, onComplete?: Function, onAbort?: Function) {
