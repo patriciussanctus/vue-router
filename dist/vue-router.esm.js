@@ -1,6 +1,6 @@
 /*!
   * vue-router v3.0.2
-  * (c) 2018 Evan You
+  * (c) 2019 Evan You
   * @license MIT
   */
 /*  */
@@ -2548,7 +2548,7 @@ VueRouter.prototype.reload = function reload () {
   if (current.params) { result.params = current.params; }
   if (current.query) { result.query = current.query; }
 
-  this.history.push(result);
+  this.history.replace(result);
 };
 
 VueRouter.prototype.replace = function replace (location, onComplete, onAbort) {
